@@ -48,7 +48,7 @@ jobs:
         if: always() && !cancelled()
         with:
           token: ${{ github.token }}
-          name: BastardKB Firmware release ${{ steps.next.outputs.version }}
+          name: v${{ steps.next.outputs.version }}
           tag_name: ${{ steps.next.outputs.r_version }}
           fail_on_unmatched_files: false
           draft: false
