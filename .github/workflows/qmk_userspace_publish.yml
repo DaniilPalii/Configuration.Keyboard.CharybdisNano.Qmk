@@ -29,11 +29,6 @@ jobs:
         with:
           name: Firmware
 
-      # - name: Delete release
-        # run: gh release delete ${{ inputs.release_name || 'latest' }} --cleanup-tag || true
-        # env:
-        #   GITHUB_TOKEN: ${{ github.token }}
-
       - name: Get Previous tag
         id: previoustag
         uses: 'WyriHaximus/github-action-get-previous-tag@v1'

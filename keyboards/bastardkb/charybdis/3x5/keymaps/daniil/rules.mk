@@ -1,1 +1,2 @@
 VIA_ENABLE = yes
+ARGOS_ENABLE = yes
