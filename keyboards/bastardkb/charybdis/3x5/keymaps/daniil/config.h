@@ -17,6 +17,7 @@
 #pragma once
 
 #define PERMISSIVE_HOLD
+#define FLOW_TAP_TERM 0
 
 #ifdef VIA_ENABLE
 /* VIA configuration. */
