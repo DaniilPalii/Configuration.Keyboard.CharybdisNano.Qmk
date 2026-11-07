@@ -178,7 +178,7 @@ void keyboard_post_init_user(void) {
         {MODE_ZOOM, 1100},
         {MODE_VOLUME, 500},
         {MODE_TAB_SWITCH, 500},
-        {MODE_HISTORY, 1900},
+        {MODE_HISTORY, 500}
     };
 
     if (bkpd_get_auto_mouse_layer_enabled()) {
