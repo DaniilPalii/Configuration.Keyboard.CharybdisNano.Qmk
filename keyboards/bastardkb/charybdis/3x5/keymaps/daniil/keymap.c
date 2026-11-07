@@ -166,21 +166,6 @@ tap_dance_action_t tap_dance_actions[] = {
 };
 
 void keyboard_post_init_user(void) {
-    static const struct {
-        uint8_t mode;
-        uint16_t dpi;
-    } mode_dpi[] = {
-        {MODE_NORMAL, 1400},
-        {MODE_SNIPING, 500},
-        {MODE_DRAGSCROLL, 700},
-        {MODE_CURSOR, 800},
-        {MODE_BRIGHTNESS, 500},
-        {MODE_ZOOM, 1100},
-        {MODE_VOLUME, 500},
-        {MODE_TAB_SWITCH, 500},
-        {MODE_HISTORY, 500}
-    };
-
     if (bkpd_get_auto_mouse_layer_enabled()) {
         bkpd_set_auto_mouse_layer_enabled(false);
     }
@@ -188,11 +173,15 @@ void keyboard_post_init_user(void) {
         bkpd_set_auto_precision_on_mouse_layer_enabled(true);
     }
 
-    for (uint8_t i = 0; i < sizeof(mode_dpi) / sizeof(mode_dpi[0]); i++) {
-        if (bkpd_mode_get_dpi(mode_dpi[i].mode) != mode_dpi[i].dpi) {
-            bkpd_mode_change_dpi(mode_dpi[i].mode, mode_dpi[i].dpi);
-        }
-    }
+    bkpd_mode_change_dpi(MODE_NORMAL, 14000);
+    bkpd_mode_change_dpi(MODE_SNIPING, 500);
+    bkpd_mode_change_dpi(MODE_DRAGSCROLL, 700);
+    bkpd_mode_change_dpi(MODE_CURSOR, 800);
+    bkpd_mode_change_dpi(MODE_BRIGHTNESS, 500);
+    bkpd_mode_change_dpi(MODE_ZOOM, 1100);
+    bkpd_mode_change_dpi(MODE_VOLUME, 500);
+    bkpd_mode_change_dpi(MODE_TAB_SWITCH, 500);
+    bkpd_mode_change_dpi(MODE_HISTORY, 500);
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
