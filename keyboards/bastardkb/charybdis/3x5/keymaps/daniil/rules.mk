@@ -1,3 +1,2 @@
-EXTRAKEY_ENABLE = yes # Media controls and system keys
-COMBO_ENABLE = yes
-TAP_DANCE_ENABLE = yes
+VIA_ENABLE = yes
+ARGOS_ENABLE = yes

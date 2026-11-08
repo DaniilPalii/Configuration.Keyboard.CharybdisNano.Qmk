@@ -1,11 +1,6 @@
 #pragma once
 
 #define PERMISSIVE_HOLD
-#define TAPPING_TERM 200
-#define COMBO_TERM 50
-#define FLOW_TAP_TERM 0
-#define QUICK_TAP_TERM 0
-#define AUTO_MOUSE_TIME 650
 
 #ifndef __arm__
 /* Disable unused features. */

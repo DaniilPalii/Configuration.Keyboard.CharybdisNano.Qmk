@@ -1,6 +1,8 @@
 #include QMK_KEYBOARD_H
-#include "bk_pointing_device.h"
-#include "bk_pointing_modes.h"
+
+#ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
+#    include "timer.h"
+#endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 
 enum charybdis_keymap_layers {
     LAYER_BASE = 0,
@@ -13,33 +15,36 @@ enum charybdis_keymap_layers {
     LAYER_FUNCTIONS,
 };
 
+// Automatically enable sniping-mode on the pointer layer.
+#define CHARYBDIS_AUTO_SNIPING_ON_LAYER LAYER_POINTER
+
+#ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
+static uint16_t auto_pointer_layer_timer = 0;
+
+#    ifndef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS
+#        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 1000
+#    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS
+
+#    ifndef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD
+#        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD 8
+#    endif // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD
+#endif     // CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
+
 enum {
     TD_DRAGSCROLL_CLICK = 5,
-};
-
-enum charybdis_combos {
-    COMBO_BACKSPACE,
-    COMBO_DELETE,
-    COMBO_ESCAPE_LEFT,
-    COMBO_SPACE_LEFT,
-    COMBO_TAB_LEFT,
-    COMBO_TAB_RIGHT,
-    COMBO_ESCAPE_RIGHT,
-    COMBO_ENTER_RIGHT,
-    COMBO_SYMBOL_1,
-    COMBO_SYMBOL_2,
-    COMBO_ENTER_NUMERAL,
-    COMBO_BACKSPACE_NUMERAL,
-    COMBO_MOUSE_LEFT,
-    COMBO_MOUSE_RIGHT,
-    COMBO_MOUSE_MIDDLE,
-    COMBO_SYSTEM_WAKE,
 };
 
 #define HOME_ROW_ALT_T(KC) LALT_T(KC)
 #define HOME_ROW_SHIFT_T(KC) LSFT_T(KC)
 #define HOME_ROW_CTRL_T(KC) LCTL_T(KC)
 #define HOME_ROW_GUI_T(KC) LGUI_T(KC)
+
+#ifndef POINTING_DEVICE_ENABLE
+#    define DRGSCRL KC_NO
+#    define DPI_MOD KC_NO
+#    define S_D_MOD KC_NO
+#    define SNIPING KC_NO
+#endif // !POINTING_DEVICE_ENABLE
 
 // clang-format off
 #define LAYOUT_LAYER_BASE \
@@ -103,110 +108,4 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [LAYER_FUNCTIONS]  = LAYOUT_wrapper(LAYOUT_LAYER_FUNCTIONS),
 };
 
-const uint16_t PROGMEM combo_backspace[]       = {LT(LAYER_NUMERAL, KC_COMM), LT(LAYER_MEDIA, KC_DOT), COMBO_END};
-const uint16_t PROGMEM combo_delete[]          = {LT(LAYER_MEDIA, KC_X), LT(LAYER_NUMERAL, KC_C), COMBO_END};
-const uint16_t PROGMEM combo_escape_left[]     = {LT(LAYER_MEDIA, KC_DOT), HOME_ROW_GUI_T(KC_SLSH), COMBO_END};
-const uint16_t PROGMEM combo_space_left[]      = {LT(LAYER_NUMERAL, KC_C), RALT_T(KC_V), COMBO_END};
-const uint16_t PROGMEM combo_tab_left[]        = {LT(LAYER_FUNCTIONS, KC_I), KC_O, COMBO_END};
-const uint16_t PROGMEM combo_tab_right[]       = {KC_W, LT(LAYER_FUNCTIONS, KC_E), COMBO_END};
-const uint16_t PROGMEM combo_escape_right[]    = {HOME_ROW_GUI_T(KC_Z), LT(LAYER_MEDIA, KC_X), COMBO_END};
-const uint16_t PROGMEM combo_enter_right[]     = {RALT_T(KC_M), LT(LAYER_NUMERAL, KC_COMM), COMBO_END};
-const uint16_t PROGMEM combo_symbol_1[]        = {KC_4, KC_5, COMBO_END};
-const uint16_t PROGMEM combo_symbol_2[]        = {KC_6, KC_5, COMBO_END};
-const uint16_t PROGMEM combo_enter_numeral[]   = {KC_8, KC_7, COMBO_END};
-const uint16_t PROGMEM combo_backspace_num[]   = {KC_8, KC_9, COMBO_END};
-const uint16_t PROGMEM combo_mouse_left[]      = {RALT_T(KC_M), LT(LAYER_MEDIA, KC_DOT), COMBO_END};
-const uint16_t PROGMEM combo_mouse_right[]     = {LT(LAYER_NUMERAL, KC_COMM), HOME_ROW_GUI_T(KC_SLSH), COMBO_END};
-const uint16_t PROGMEM combo_mouse_middle[]    = {RALT_T(KC_M), HOME_ROW_GUI_T(KC_SLSH), COMBO_END};
-const uint16_t PROGMEM combo_system_wake[]     = {HOME_ROW_CTRL_T(KC_J), LT(LAYER_SYMBOLS, KC_SCLN), COMBO_END};
-
-combo_t key_combos[] = {
-    [COMBO_BACKSPACE]     = COMBO(combo_backspace, KC_BSPC),
-    [COMBO_DELETE]        = COMBO(combo_delete, KC_DEL),
-    [COMBO_ESCAPE_LEFT]   = COMBO(combo_escape_left, KC_ESC),
-    [COMBO_SPACE_LEFT]    = COMBO(combo_space_left, KC_SPC),
-    [COMBO_TAB_LEFT]      = COMBO(combo_tab_left, KC_TAB),
-    [COMBO_TAB_RIGHT]     = COMBO(combo_tab_right, KC_TAB),
-    [COMBO_ESCAPE_RIGHT]  = COMBO(combo_escape_right, KC_ESC),
-    [COMBO_ENTER_RIGHT]   = COMBO(combo_enter_right, KC_ENT),
-    [COMBO_SYMBOL_1]      = COMBO(combo_symbol_1, RALT(KC_1)),
-    [COMBO_SYMBOL_2]      = COMBO(combo_symbol_2, S(KC_5)),
-    [COMBO_ENTER_NUMERAL] = COMBO(combo_enter_numeral, KC_ENT),
-    [COMBO_BACKSPACE_NUMERAL] = COMBO(combo_backspace_num, KC_BSPC),
-    [COMBO_MOUSE_LEFT]    = COMBO(combo_mouse_left, MS_BTN1),
-    [COMBO_MOUSE_RIGHT]   = COMBO(combo_mouse_right, MS_BTN2),
-    [COMBO_MOUSE_MIDDLE]  = COMBO(combo_mouse_middle, MS_BTN3),
-    [COMBO_SYSTEM_WAKE]   = COMBO(combo_system_wake, KC_SYSTEM_WAKE),
-};
-
-static bool dragscroll_click_held;
-
-static void dragscroll_click_finished(tap_dance_state_t *state, void *user_data) {
-    if (state->count != 1) {
-        return;
-    }
-
-    if (state->pressed && !state->interrupted) {
-        register_code16(DRGSCRL);
-        dragscroll_click_held = true;
-    } else {
-        tap_code16(MS_BTN3);
-    }
-}
-
-static void dragscroll_click_reset(tap_dance_state_t *state, void *user_data) {
-    if (dragscroll_click_held) {
-        unregister_code16(DRGSCRL);
-        dragscroll_click_held = false;
-    }
-}
-
-tap_dance_action_t tap_dance_actions[] = {
-    [TD_DRAGSCROLL_CLICK] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dragscroll_click_finished, dragscroll_click_reset),
-};
-
-void keyboard_post_init_user(void) {
-    if (bkpd_get_auto_mouse_layer_enabled()) {
-        bkpd_set_auto_mouse_layer_enabled(false);
-    }
-    if (!bkpd_get_auto_precision_on_mouse_layer_enabled()) {
-        bkpd_set_auto_precision_on_mouse_layer_enabled(true);
-    }
-
-    bkpd_mode_change_dpi(MODE_NORMAL, 14000);
-    bkpd_mode_change_dpi(MODE_SNIPING, 500);
-    bkpd_mode_change_dpi(MODE_DRAGSCROLL, 700);
-    bkpd_mode_change_dpi(MODE_CURSOR, 800);
-    bkpd_mode_change_dpi(MODE_BRIGHTNESS, 500);
-    bkpd_mode_change_dpi(MODE_ZOOM, 1100);
-    bkpd_mode_change_dpi(MODE_VOLUME, 500);
-    bkpd_mode_change_dpi(MODE_TAB_SWITCH, 500);
-    bkpd_mode_change_dpi(MODE_HISTORY, 500);
-}
-
-layer_state_t layer_state_set_user(layer_state_t state) {
-    // Keep the exported trackball profiles tied to the active typing layer.
-    switch (get_highest_layer(state)) {
-        case LAYER_NAVIGATION:
-            bkpd_mode_set_active(MODE_CURSOR);
-            break;
-        case LAYER_MEDIA:
-            bkpd_mode_set_active(MODE_VOLUME);
-            break;
-        case LAYER_POINTER:
-        case LAYER_SYMBOLS:
-            bkpd_mode_set_active(MODE_SNIPING);
-            break;
-        case LAYER_NUMERAL:
-            bkpd_mode_set_active(MODE_DRAGSCROLL);
-            break;
-        case LAYER_FUNCTIONS:
-            bkpd_mode_set_active(MODE_ZOOM);
-            break;
-        default:
-            bkpd_mode_set_active(MODE_NORMAL);
-            break;
-    }
-    return state;
-}
 // clang-format on
