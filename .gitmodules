@@ -1,6 +1,6 @@
 [submodule "qmk-modules"]
 	path = modules/bastardkb
-	url = https://github.com/DaniilPalii/Configuration.QmkModules.git
+	url = https://github.com/Bastardkb/qmk_modules.git
 [submodule "qmk-firmware"]
 	path = firmware/bastardkb
 	url = https://github.com/Bastardkb/bastardkb-qmk.git
