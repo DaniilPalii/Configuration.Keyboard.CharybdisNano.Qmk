@@ -1,6 +1,7 @@
 #pragma once
 
 #define PERMISSIVE_HOLD
+#define CHORDAL_HOLD
 
 #ifndef __arm__
 /* Disable unused features. */
