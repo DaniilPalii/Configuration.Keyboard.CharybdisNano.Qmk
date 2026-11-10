@@ -109,3 +109,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 // clang-format on
+
+#define COMBO_SHOULD_TRIGGER
+bool combo_should_trigger(
+    uint16_t combo_index,
+    combo_t *combo,
+    uint16_t keycode,
+    keyrecord_t *record)
+{
+    if (layer_state_is(LAYER_BASE))
+    {
+        return false;
+    }
+
+    return true;
+}
